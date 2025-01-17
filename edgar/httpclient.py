@@ -17,10 +17,24 @@ DEFAULT_PARAMS = {
     "default_encoding": "utf-8",
 }
 
+MAX_REQUESTS_PER_SECOND = 10
+
+### Rate Limititing is implemented as an HTTPX Transport - requests are throttled using a single "limiter" shared across Transports
+_LIMITER_TRANSPORT = True # Disabled by default: waiting on a PR on upstream
+
+if _LIMITER_TRANSPORT:
+    from httpx_ratelimiter import LimiterTransport
+    _SYNC_TRANSPORT = LimiterTransport(per_second=MAX_REQUESTS_PER_SECOND, max_delay=5000)
+else:
+    _SYNC_TRANSPORT = None # httpx.HTTPTransport for httpx.Client
+
 def _client_factory(**kwargs)-> httpx.Client:
     params = DEFAULT_PARAMS.copy()
     params["headers"] = client_headers()
     
+    if _SYNC_TRANSPORT: 
+        params["transport"] = _SYNC_TRANSPORT
+
     params.update(**kwargs)
     
     return httpx.Client(**params)
@@ -29,6 +43,10 @@ def _async_client_factory(**kwargs) -> httpx.AsyncClient:
     params = DEFAULT_PARAMS.copy()
     params["headers"] = client_headers()
     
+    if _SYNC_TRANSPORT: 
+        from httpx_ratelimiter import AsyncLimiterTransport
+        params["transport"] = AsyncLimiterTransport(per_second=MAX_REQUESTS_PER_SECOND, max_delay=5000, limiter = _SYNC_TRANSPORT.limiter)
+
     params.update(**kwargs)
 
     return httpx.AsyncClient(**params)

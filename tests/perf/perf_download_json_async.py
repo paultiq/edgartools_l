@@ -1,4 +1,4 @@
-from edgar.httprequests import download_json_async
+from edgar.http.httprequests import download_json_async
 import asyncio
 
 if __name__ == '__main__':

@@ -25,7 +25,7 @@ from rich.text import Text
 
 from edgar.richtools import repr_rich, print_xml, print_rich
 from edgar.core import sec_dot_gov, display_size, binary_extensions, text_extensions, has_html_content
-from edgar.httprequests import get_with_retry, download_file, download_file_async
+from edgar.http.httprequests import get_with_retry, download_file, download_file_async
 
 xbrl_document_types = ['XBRL INSTANCE DOCUMENT', 'XBRL INSTANCE FILE', 'EXTRACTED XBRL INSTANCE DOCUMENT']
 

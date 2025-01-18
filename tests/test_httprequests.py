@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 import httpx
 import pytest
 
-from edgar.httprequests import (
+from edgar.http.httprequests import (
     get_with_retry,
     get_with_retry_async,
     stream_with_retry,
@@ -44,7 +44,7 @@ def test_get_with_retry_for_redirect(status_code, monkeypatch):
         mock_response.headers["Location"] = "http://example.com/redirected"
 
     with patch("httpx.Client.get", return_value=mock_response):
-        with patch("edgar.httprequests.get_with_retry") as mock_retry:
+        with patch("edgar.http.httprequests.get_with_retry") as mock_retry:
             get_with_retry("http://example.com")
             mock_retry.assert_called_once_with("http://example.com/redirected",
                                                identity=os.environ['EDGAR_IDENTITY'],
@@ -61,7 +61,7 @@ async def test_get_with_retry_async(status_code):
             with pytest.raises(TooManyRequestsError):
                 await get_with_retry_async("http://example.com")
         elif status_code in [301, 302]:
-            with patch("edgar.httprequests.get_with_retry_async") as mock_retry:
+            with patch("edgar.http.httprequests.get_with_retry_async") as mock_retry:
                 await get_with_retry_async("http://example.com")
                 mock_retry.assert_called_once()
         else:
@@ -79,7 +79,7 @@ async def test_get_with_retry_async_for_redirect(status_code):
         mock_response.headers["Location"] = "http://example.com/redirected"
 
     with patch("httpx.Client.get", return_value=mock_response):
-        with patch("edgar.httprequests.get_with_retry") as mock_retry:
+        with patch("edgar.http.httprequests.get_with_retry") as mock_retry:
             get_with_retry("http://example.com")
             mock_retry.assert_called_once_with("http://example.com/redirected",
                                                identity=os.environ['EDGAR_IDENTITY'],

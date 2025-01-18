@@ -1,4 +1,4 @@
-from edgar.httprequests import download_file
+from edgar.http.httprequests import download_file
 from edgar._filings import  read_index_file, read_form_index_file, read_company_index_file
 import pandas as pd
 from pathlib import Path

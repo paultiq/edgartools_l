@@ -9,7 +9,7 @@ from rich.markdown import Markdown
 
 from edgar.richtools import df_to_rich_table, repr_rich
 from edgar.core import sec_dot_gov
-from edgar.httprequests import download_file
+from edgar.http.httprequests import download_file
 
 __all__ = [
     'SecForms',

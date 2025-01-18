@@ -27,7 +27,7 @@ from edgar.core import (log, Result, display_size, listify,
                         parse_acceptance_datetime, datefmt)
 from edgar.storage import is_using_local_storage, get_edgar_data_directory
 from edgar.financials import Financials
-from edgar.httprequests import download_json, download_text
+from edgar.http.httprequests import download_json, download_text
 from edgar.reference.forms import describe_form
 from edgar.reference.tickers import get_company_tickers, get_icon_from_ticker, find_cik
 from edgar.richtools import df_to_rich_table, repr_rich

@@ -8,7 +8,7 @@ from edgar.offerings import FormD
 from edgar.ownership import Ownership
 import httpx
 import pytest
-import edgar.httprequests
+import edgar.http.httprequests
 from edgar import get_filings
 
 

@@ -26,7 +26,7 @@ from edgar.datatools import na_value
 from edgar.richtools import repr_rich, colorize_words
 from edgar.attachments import Attachments
 from edgar.core import log, split_camel_case, run_async_or_sync
-from edgar.httprequests import download_file_async
+from edgar.http.httprequests import download_file_async
 from edgar.xbrl.calculations import CalculationLinkbase
 from edgar.xbrl.concepts import Concept, concept_to_label
 from edgar.xbrl.definitions import parse_definition_linkbase

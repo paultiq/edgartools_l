@@ -1,5 +1,5 @@
 import asyncio
-from edgar.httprequests import download_json_async, get_with_retry_async, TooManyRequestsError
+from edgar.http.httprequests import download_json_async, get_with_retry_async, TooManyRequestsError
 from pyinstrument import Profiler
 import pandas as pd
 

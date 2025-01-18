@@ -61,8 +61,7 @@ from edgar.files.markdown import to_markdown
 from edgar.sgml import FilingSgml
 from edgar.sgml.header import FilingHeader
 from edgar.headers import FilingDirectory, IndexHeaders
-from edgar.httprequests import download_file, download_text, download_text_between_tags
-from edgar.httprequests import get_with_retry
+from edgar.http.httprequests import download_file, download_text, download_text_between_tags, get_with_retry
 from edgar.reference import describe_form
 from edgar.richtools import repr_rich, rich_to_text, print_rich
 from edgar.search import BM25Search, RegexSearch

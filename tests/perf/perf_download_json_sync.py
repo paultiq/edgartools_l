@@ -1,4 +1,4 @@
-from edgar.httprequests import download_json
+from edgar.http.httprequests import download_json
 import asyncio
 from pyinstrument import Profiler
 

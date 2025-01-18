@@ -6,7 +6,7 @@ from rich import print
 
 from edgar import Filing, find
 from edgar.attachments import Attachment, Attachments
-from edgar.httprequests import download_file
+from edgar.http.httprequests import download_file
 
 
 def test_attachments_query():

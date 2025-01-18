@@ -11,7 +11,7 @@ from httpx import HTTPStatusError
 from tqdm.auto import tqdm
 
 from edgar.core import log, get_edgar_data_directory, filing_date_to_year_quarters, extract_dates
-from edgar.httprequests import download_bulk_data, download_datafile, download_text
+from edgar.http.httprequests import download_bulk_data, download_datafile, download_text
 from edgar.reference.tickers import (ticker_txt_url,
                                      company_tickers_json_url,
                                      mutual_fund_tickers_url,

@@ -10,7 +10,7 @@ import pyarrow as pa
 from httpx import HTTPStatusError
 
 from edgar.core import log, get_edgar_data_directory
-from edgar.httprequests import download_file, download_json
+from edgar.http.httprequests import download_file, download_json
 from edgar.reference.data.common import read_parquet_from_package, read_csv_from_package
 
 __all__ = ['cusip_ticker_mapping', 'get_ticker_from_cusip', 'get_company_tickers', 'get_icon_from_ticker', 'find_cik',

@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Union, Optional
 from typing import Iterator
 from functools import cached_property
-from edgar.httprequests import stream_with_retry
+from edgar.http.httprequests import stream_with_retry
 from edgar.sgml.header import FilingHeader
 from edgar.sgml.parsers import SGMLParser, SGMLFormatType, SGMLDocument
 from edgar.sgml.tools import is_xml

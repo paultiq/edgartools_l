@@ -17,39 +17,35 @@ DEFAULT_PARAMS = {
     "default_encoding": "utf-8",
 }
 
-MAX_REQUESTS_PER_SECOND = 10
 
 ### Rate Limititing is implemented as an HTTPX Transport - requests are throttled using a single "limiter" shared across Transports
 _LIMITER_TRANSPORT = True # Disabled by default: waiting on a PR on upstream
-
-if _LIMITER_TRANSPORT:
-    from httpx_ratelimiter import LimiterTransport
-    _SYNC_TRANSPORT = LimiterTransport(per_second=MAX_REQUESTS_PER_SECOND, max_delay=5000)
-else:
-    _SYNC_TRANSPORT = None # httpx.HTTPTransport for httpx.Client
+_CLIENT_IMPL = httpx.Client
+_ASYNC_CLIENT_IMPL = httpx.AsyncClient
 
 def _client_factory(**kwargs)-> httpx.Client:
     params = DEFAULT_PARAMS.copy()
     params["headers"] = client_headers()
     
-    if _SYNC_TRANSPORT: 
-        params["transport"] = _SYNC_TRANSPORT
+    if _LIMITER_TRANSPORT: 
+        from edgar.http.httpclient_ratelimiter import transport_factory
+        params["transport"] = transport_factory()
 
     params.update(**kwargs)
     
-    return httpx.Client(**params)
+    return _CLIENT_IMPL(**params)
 
 def _async_client_factory(**kwargs) -> httpx.AsyncClient:
     params = DEFAULT_PARAMS.copy()
     params["headers"] = client_headers()
     
-    if _SYNC_TRANSPORT: 
-        from httpx_ratelimiter import AsyncLimiterTransport
-        params["transport"] = AsyncLimiterTransport(per_second=MAX_REQUESTS_PER_SECOND, max_delay=5000, limiter = _SYNC_TRANSPORT.limiter)
+    if _LIMITER_TRANSPORT: 
+        from edgar.http.httpclient_ratelimiter import async_transport_factory
+        params["transport"] = async_transport_factory()
 
     params.update(**kwargs)
 
-    return httpx.AsyncClient(**params)
+    return _ASYNC_CLIENT_IMPL(**params)
 
 def _http_client_manager():
     """When PERSISTENT_CLIENT, creates and reuses a single client. Otherwise, creates a new client per invocation."""

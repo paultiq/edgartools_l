@@ -18,7 +18,7 @@ from stamina import retry
 from tqdm import tqdm
 
 from edgar.core import text_extensions, get_edgar_data_directory
-from edgar.httpclient import http_client, ahttp_client
+from edgar.http.httpclient import http_client, async_http_client
 
 __all__ = ["get_with_retry", "get_with_retry_async", "stream_with_retry", "post_with_retry", "post_with_retry_async",
            "download_file", "download_file_async", "download_json", "download_json_async", "stream_file",
@@ -86,7 +86,7 @@ async def get_with_retry_async(url, identity=None, identity_callable=None, **kwa
     Raises:
         TooManyRequestsError: If the response status code is 429 (Too Many Requests).
     """
-    async with ahttp_client() as client:
+    async with async_http_client() as client:
         response = await client.get(url, **kwargs)
         if response.status_code == 429:
             raise TooManyRequestsError(url)
@@ -178,7 +178,7 @@ async def post_with_retry_async(url,
     Raises:
         TooManyRequestsError: If the response status code is 429 (Too Many Requests).
     """
-    async with ahttp_client() as client:
+    async with async_http_client() as client:
         response = await client.post(url, data=data, json=json, **kwargs)
         if response.status_code == 429:
             raise TooManyRequestsError(url)
@@ -346,7 +346,7 @@ async def stream_file(url: str, as_text: bool = None, path: Optional[Union[str, 
         # Set the default based on the file extension
         as_text = url.endswith(text_extensions)
 
-    async with ahttp_client(headers=kwargs['headers']) as client:
+    async with async_http_client() as client:
         async with client.stream('GET', url) as response:
             inspect_response(response)
             total_size = int(response.headers.get('Content-Length', 0))

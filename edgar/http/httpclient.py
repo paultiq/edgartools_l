@@ -130,7 +130,7 @@ def _async_client_manager():
 
 
 http_client, _close_client = _http_client_manager()
-ahttp_client, _aclose_client = _async_client_manager()
+async_http_client, _aclose_client = _async_client_manager()
 
 def close_clients():
     """Closes and invalidates existing client sessions."""

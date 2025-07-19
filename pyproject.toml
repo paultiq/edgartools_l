@@ -70,23 +70,12 @@ artifacts = [
 
 [tool.hatch.envs.default]
 dependencies = [
-  "pytest",
-  "pytest-cov",
-  "pytest-env",
-  "pytest-xdist",
-  "pytest-asyncio",
-  "pyinstrument",
-  "pyright",
-  "ruff",
-  "tqdm",
-  "xlsxwriter",
-  "openpyxl",
-  "jupyter",
-  "freezegun==1.5.1",
-  "mkdocs",
-  "mkdocstrings[python]",
-  "mkdocs-material"
+  "dev"
 ]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.hatch.envs.default.scripts]
 cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=edgar --cov=tests --ignore=tests/legacy {args}"
 no-cov = "cov --no-cov {args}"
@@ -128,4 +117,27 @@ line-length = 150
 [tool.pytest.ini_options]
 env = [
     "EDGAR_IDENTITY=Dev Gunning developer-gunning@gmail.com",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "pytest",
+    "pytest-cov",
+    "pytest-env",
+    "pytest-xdist",
+    "pytest-asyncio",
+    "pyinstrument",
+    "pyright",
+    "ruff",
+    "tqdm",
+    "xlsxwriter",
+    "openpyxl",
+    "jupyter",
+    "freezegun==1.5.1",
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material",
+    "psycopg-pool>=3.2.6",
+    "psycopg[binary]>=3.2.9",
 ]

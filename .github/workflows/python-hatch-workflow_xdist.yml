@@ -37,5 +37,5 @@ jobs:
       run: uv sync --all-groups
     - name: Run test with coverage
       run: |
-        pytest -n auto tests --ratelimit_postgres
+        pytest -n 4 tests --cov --ratelimit_postgres
         

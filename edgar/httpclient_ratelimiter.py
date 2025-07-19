@@ -16,6 +16,18 @@ log = logging.getLogger(__name__)
 def create_rate_limiter(requests_per_second: int, max_delay: int) -> Limiter:
     return Limiter(Rate(requests_per_second, Duration.SECOND), raise_when_fail=False, max_delay=max_delay)
 
+def create_sqlite_rate_limiter(requests_per_second: int, max_delay: int) -> Limiter:
+    from pyrate_limiter import Rate, Limiter, Duration, SQLiteBucket
+
+    rate = Rate(requests_per_second, Duration.SECOND)
+    
+    rates = [rate]
+    bucket = SQLiteBucket.init_from_file(rates, use_file_lock=True)
+
+    limiter = Limiter(bucket, raise_when_fail=False, max_delay=max_delay)
+    
+    return limiter
+
 
 def create_postgres_rate_limiter(requests_per_second: int, max_delay: int, postgres_url: str, table_name: str = "edgar_pyrate") -> Limiter:
     from pyrate_limiter import PostgresBucket, Rate, PostgresClock, Limiter, Duration

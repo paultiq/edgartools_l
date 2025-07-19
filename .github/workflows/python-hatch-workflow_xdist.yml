@@ -25,6 +25,14 @@ jobs:
         python-version: ${{ matrix.python-version }}
         activate-environment: true
         enable-cache: true
+    - name: Run PostgreSQL container
+      run: |
+        docker run --name pg-limiter \
+          -e POSTGRES_PASSWORD=pass \
+          -e POSTGRES_DB=ratelimit \
+          -p 5432:5432 \
+          -d postgres \
+          -c max_connections=200
     - name: Install dependencies
       run: uv sync --all-groups
     - name: Run test with coverage

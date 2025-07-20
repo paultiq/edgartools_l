@@ -9,7 +9,7 @@ To control rate limit across multiple processes, see https://pyratelimiter.readt
 import httpx
 import logging
 
-from pyrate_limiter import Limiter, Rate, Duration
+from pyrate_limiter import Limiter, Rate, Duration, SQLiteClock
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ def create_sqlite_rate_limiter(requests_per_second: int, max_delay_sec: int = 60
     from pyrate_limiter import Rate, Limiter, Duration, SQLiteBucket
     rate = Rate(requests_per_second, Duration.SECOND)
     bucket = SQLiteBucket.init_from_file([rate], db_path = db_path, use_file_lock=True)
-    limiter = Limiter(bucket, raise_when_fail=True, max_delay=max_delay_sec*1000, retry_until_max_delay=True)
+    limiter = Limiter(bucket, raise_when_fail=True, max_delay=max_delay_sec*1000, retry_until_max_delay=True, clock = SQLiteClock(bucket))
 
     return limiter
 

@@ -14,34 +14,20 @@ from pyrate_limiter import Limiter, Rate, Duration
 log = logging.getLogger(__name__)
 
 def create_rate_limiter(requests_per_second: int, max_delay: int) -> Limiter:
+    """max_delay in milliseconds"""
     return Limiter(Rate(requests_per_second, Duration.SECOND), raise_when_fail=False, max_delay=max_delay)
 
 def create_sqlite_rate_limiter(requests_per_second: int, max_delay: int) -> Limiter:
+    """Creates a sqlite rate limiting using a filelock.
+    max_delay in milliseconds
+
+    This is multiprocessing safe.
+    """
     from pyrate_limiter import Rate, Limiter, Duration, SQLiteBucket
-
     rate = Rate(requests_per_second, Duration.SECOND)
-    
-    rates = [rate]
-    bucket = SQLiteBucket.init_from_file(rates, use_file_lock=True)
+    bucket = SQLiteBucket.init_from_file([rate], db_path = "pyrate_limiter.sqlite", use_file_lock=True)
+    limiter = Limiter(bucket, raise_when_fail=True, max_delay=max_delay, retry_until_max_delay=True)
 
-    limiter = Limiter(bucket, raise_when_fail=False, max_delay=max_delay)
-    
-    return limiter
-
-
-def create_postgres_rate_limiter(requests_per_second: int, max_delay: int, postgres_url: str, table_name: str = "edgar_pyrate") -> Limiter:
-    from pyrate_limiter import PostgresBucket, Rate, PostgresClock, Limiter, Duration
-    from psycopg_pool import ConnectionPool
-
-    rate = Rate(requests_per_second, Duration.SECOND)
-    
-    connection_pool = ConnectionPool(postgres_url) # 'postgresql://postgres:pass@localhost:5432/ratelimit'
-
-    clock = PostgresClock(connection_pool)
-    rates = [rate]
-    bucket = PostgresBucket(connection_pool, table_name, rates)
-    limiter = Limiter(bucket, raise_when_fail=False, max_delay=max_delay, clock=clock)
-    
     return limiter
 
 class RateLimitingTransport(httpx.HTTPTransport):

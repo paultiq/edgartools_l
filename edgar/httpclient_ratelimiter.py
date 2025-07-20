@@ -13,11 +13,11 @@ from pyrate_limiter import Limiter, Rate, Duration
 
 log = logging.getLogger(__name__)
 
-def create_rate_limiter(requests_per_second: int, max_delay: int) -> Limiter:
+def create_rate_limiter(requests_per_second: int, max_delay_sec: int = 60) -> Limiter:
     """max_delay in milliseconds"""
-    return Limiter(Rate(requests_per_second, Duration.SECOND), raise_when_fail=False, max_delay=max_delay)
+    return Limiter(Rate(requests_per_second, Duration.SECOND), raise_when_fail=False, max_delay=max_delay_sec*1000)
 
-def create_sqlite_rate_limiter(requests_per_second: int, max_delay: int) -> Limiter:
+def create_sqlite_rate_limiter(requests_per_second: int, max_delay_sec: int = 60, db_path = "pyrate_limiter.sqlite") -> Limiter:
     """Creates a sqlite rate limiting using a filelock.
     max_delay in milliseconds
 
@@ -25,8 +25,8 @@ def create_sqlite_rate_limiter(requests_per_second: int, max_delay: int) -> Limi
     """
     from pyrate_limiter import Rate, Limiter, Duration, SQLiteBucket
     rate = Rate(requests_per_second, Duration.SECOND)
-    bucket = SQLiteBucket.init_from_file([rate], db_path = "pyrate_limiter.sqlite", use_file_lock=True)
-    limiter = Limiter(bucket, raise_when_fail=True, max_delay=max_delay, retry_until_max_delay=True)
+    bucket = SQLiteBucket.init_from_file([rate], db_path = db_path, use_file_lock=True)
+    limiter = Limiter(bucket, raise_when_fail=True, max_delay=max_delay_sec*1000, retry_until_max_delay=True)
 
     return limiter
 

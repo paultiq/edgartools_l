@@ -37,7 +37,7 @@ import hishel
 from typing import AsyncGenerator, Optional
 from edgar.core import get_identity, edgar_mode, strtobool
 from edgar.httpclient_cache import get_cache_controller
-from edgar.httpclient_ratelimiter import RateLimitingTransport, AsyncRateLimitingTransport, create_rate_limiter
+from edgar.httpclient_ratelimiter import RateLimitingTransport, AsyncRateLimitingTransport, create_rate_limiter, create_sqlite_rate_limiter
 from pathlib import Path
 log = logging.getLogger(__name__)
 
@@ -47,13 +47,17 @@ CACHE_DIRECTORY = "_cache"
 
 
 _DEFAULT_REQUEST_PER_SEC_LIMIT = 9
-_MAX_DELAY = 1000 * 60  # 1 minute
+_MAX_DELAY_SEC = 60  # 1 minute
 
-_RATE_LIMITER = create_rate_limiter(requests_per_second=_DEFAULT_REQUEST_PER_SEC_LIMIT, max_delay=_MAX_DELAY)
+_RATE_LIMITER = create_rate_limiter(requests_per_second=_DEFAULT_REQUEST_PER_SEC_LIMIT, max_delay_sec=_MAX_DELAY_SEC)
 
-def update_rate_limiter(requests_per_second: int):
+def update_rate_limiter(requests_per_second: int, sqlite: bool = False):
     global _RATE_LIMITER
-    _RATE_LIMITER = create_rate_limiter(requests_per_second=_DEFAULT_REQUEST_PER_SEC_LIMIT, max_delay=_MAX_DELAY)
+
+    if sqlite:
+        _RATE_LIMITER = create_sqlite_rate_limiter(requests_per_second=requests_per_second, max_delay_sec=_MAX_DELAY_SEC)
+    else:
+        _RATE_LIMITER = create_rate_limiter(requests_per_second=requests_per_second, max_delay_sec=_MAX_DELAY_SEC)
 
     close_clients()
 

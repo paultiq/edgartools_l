@@ -132,7 +132,7 @@ def get_company_tickers(
         )
 
     except Exception as e:
-        log.error(f"Error fetching company tickers from [{company_tickers_json_url}]: {str(e)}")
+        log.exception(f"Error fetching company tickers from [{company_tickers_json_url}]: {str(e)}")
         raise
 
 def load_cik_tickers_from_local() -> Optional[str]:
@@ -164,7 +164,7 @@ def get_cik_tickers_from_ticker_txt():
         data['ticker'] = data['ticker'].str.upper()
         return data
     except Exception as e:
-        log.error(f"Error fetching company tickers from [{ticker_txt_url}]: {str(e)}")
+        log.exception(f"Error fetching company tickers from [{ticker_txt_url}]: {str(e)}")
         return None
 
 @lru_cache(maxsize=1)

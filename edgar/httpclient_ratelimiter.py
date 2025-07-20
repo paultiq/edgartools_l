@@ -1,0 +1,51 @@
+"""
+The default pyrate_limiter is set to 9 requests per second. 
+
+To change the rate limit, call update_rate_limiter(requests_per_minute)
+
+To control rate limit across multiple processes, see https://pyratelimiter.readthedocs.io/en/latest/#backends
+"""
+
+import httpx
+import logging
+
+from pyrate_limiter import Limiter, Rate, Duration, SQLiteBucket, SQLiteClock
+
+log = logging.getLogger(__name__)
+
+def create_rate_limiter(requests_per_second: int, max_delay_sec: int = 60) -> Limiter:
+    """max_delay in milliseconds"""
+    return Limiter(Rate(requests_per_second, Duration.SECOND), raise_when_fail=False, max_delay=max_delay_sec*1000)
+
+def create_sqlite_rate_limiter(requests_per_second: int, max_delay_sec: int = 60, db_path = "pyrate_limiter.sqlite") -> Limiter:
+    """Creates a sqlite rate limiting using a filelock.
+    max_delay in milliseconds
+
+    This is multiprocessing safe.
+    """
+    rate = Rate(requests_per_second, Duration.SECOND)
+    bucket = SQLiteBucket.init_from_file([rate], db_path = db_path, use_file_lock=True)
+    limiter = Limiter(bucket, raise_when_fail=False, max_delay=max_delay_sec*1000, retry_until_max_delay=True, clock = SQLiteClock(bucket))
+
+    return limiter
+
+class RateLimitingTransport(httpx.HTTPTransport):
+    def __init__(self, limiter: Limiter):
+        super().__init__()
+        self._limiter = limiter
+
+    def handle_request(self, request: httpx.Request) -> httpx.Response:
+        log.debug("Limiter applied")
+        self._limiter.try_acquire("edgar", 1)  # blocks until slot available
+        return super().handle_request(request)
+
+
+class AsyncRateLimitingTransport(httpx.AsyncHTTPTransport):
+    def __init__(self, limiter: Limiter):
+        super().__init__()
+        self._limiter = limiter
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        log.debug("Limiter applied")
+        self._limiter.try_acquire("edgar", 1)  # blocks until slot available
+        return await super().handle_async_request(request)

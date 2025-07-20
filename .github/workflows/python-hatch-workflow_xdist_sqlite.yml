@@ -1,0 +1,35 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Build and Test Edgartools - SQLite Rate Limiter
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+  strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install the latest version of uv ${{ matrix.python-version }}
+      uses: astral-sh/setup-uv@v6
+      with: 
+        python-version: ${{ matrix.python-version }}
+        activate-environment: true
+        enable-cache: true
+    - name: Install dependencies
+      run: uv sync --all-groups
+    - name: Install dependencies
+      run: uv pip install filelock
+    - name: Run test with coverage
+      run: |
+        pytest -n 4 tests --cov --ratelimit_sqlite
+        

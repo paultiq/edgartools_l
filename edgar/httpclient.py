@@ -51,7 +51,12 @@ CACHE_ENABLED = True
 
 def get_cache_directory():
     if CACHE_ENABLED:
-        return os.path.join(edgar_data_dir, "_cache")
+        from pathlib import Path
+
+        cachedir = Path(edgar_data_dir) / "_cache"
+        cachedir.mkdir(exist_ok=True)
+
+        return str(cachedir)
     else:
         return None
 

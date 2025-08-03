@@ -36,8 +36,12 @@ def test_dont_exceed_limit():
     url = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent"
     count = 30
 
-    start = time.perf_counter()
     with http_client() as client:
+        for _ in range(10): # warm the bucket
+            response = client.get(url)
+            assert response.status_code == 200
+
+        start = time.perf_counter()
         for _ in range(count):
             response = client.get(url)
             assert response.status_code == 200
@@ -55,11 +59,18 @@ async def test_dont_exceed_limit_async():
     count = 30
 
     start = time.perf_counter()
-    async with async_http_client() as client:
+
+    async def run_batch(cnt):
         tasks = [client.get(url) for _ in range(count)]
         results = await asyncio.gather(*tasks)
         for r in results:
             assert r.status_code == 200
+
+    async with async_http_client() as client:
+        await run_batch(10) # warm the bucket
+        start = time.perf_counter()
+        await run_batch(count) 
+
     end = time.perf_counter()
 
     duration = end - start

@@ -81,26 +81,7 @@ artifacts = [
 ]
 
 [tool.hatch.envs.default]
-dependencies = [
-  "pytest",
-  "pytest-cov",
-  "pytest-env",
-  "pytest-xdist",
-  "pytest-asyncio",
-  "pytest-retry",
-  "filelock",
-  "pyinstrument",
-  "pyright",
-  "ruff",
-  "tqdm",
-  "xlsxwriter",
-  "openpyxl",
-  "jupyter",
-  "freezegun==1.5.1",
-  "mkdocs",
-  "mkdocstrings[python]",
-  "mkdocs-material"
-]
+dependencies = [ { group = "dev" } ]
 
 features = [
     "ai",
@@ -169,7 +150,24 @@ ignore = [
 [dependency-groups]
 dev = [
     "pre-commit>=4.3.0",
-    "pytest-retry>=1.7.0",
+    "pytest",
+    "pytest-cov",
+    "pytest-env",
+    "pytest-xdist",
+    "pytest-asyncio",
+    "pytest-retry",
+    "filelock",
+    "pyinstrument",
+    "pyright",
+    "ruff",
+    "tqdm",
+    "xlsxwriter",
+    "openpyxl",
+    "jupyter",
+    "freezegun==1.5.1",
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material"      
 ]
 
 [tool.pytest.ini_options]

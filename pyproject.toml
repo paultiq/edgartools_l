@@ -81,8 +81,6 @@ artifacts = [
 ]
 
 [tool.hatch.envs.default]
-dependencies = [ { group = "dev" } ]
-
 features = [
     "ai",
     "ai-dev"

@@ -58,6 +58,28 @@ ai-dev = [
     "responses>=0.24.0",         # HTTP response mocking
 ]
 
+dev = [    # using optional dependencies, instead of a pep735 group, bc of hatch
+  "pytest",
+  "pytest-cov",
+  "pytest-env",
+  "pytest-xdist",
+  "pytest-asyncio",
+  "pytest-retry",
+  "filelock",
+  "pyinstrument",
+  "pyright",
+  "ruff",
+  "tqdm",
+  "xlsxwriter",
+  "openpyxl",
+  "jupyter",
+  "freezegun==1.5.1",
+  "pre-commit",
+  "mkdocs",
+  "mkdocstrings[python]",
+  "mkdocs-material"
+]
+
 [project.urls]
 Documentation = "https://dgunning.github.io/edgartools/"
 Issues = "https://github.com/dgunning/edgartools/issues"
@@ -81,28 +103,8 @@ artifacts = [
 ]
 
 [tool.hatch.envs.default]
-dependencies = [
-  "pytest",
-  "pytest-cov",
-  "pytest-env",
-  "pytest-xdist",
-  "pytest-asyncio",
-  "pytest-retry",
-  "filelock",
-  "pyinstrument",
-  "pyright",
-  "ruff",
-  "tqdm",
-  "xlsxwriter",
-  "openpyxl",
-  "jupyter",
-  "freezegun==1.5.1",
-  "mkdocs",
-  "mkdocstrings[python]",
-  "mkdocs-material"
-]
-
 features = [
+    "dev",
     "ai",
     "ai-dev"
 ]
@@ -166,11 +168,6 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
-[dependency-groups]
-dev = [
-    "pre-commit>=4.3.0",
-    "pytest-retry>=1.7.0",
-]
 
 [tool.pytest.ini_options]
 env = [
